@@ -3,31 +3,53 @@ export interface AppConfig {
   databasePath: string;
 }
 
-const CONFIG_KEY = 'todo-app-config';
-
+// Read configuration from environment variables
 export function getConfig(): AppConfig | null {
-  if (typeof window === 'undefined') return null;
-  
-  const configStr = localStorage.getItem(CONFIG_KEY);
-  if (!configStr) return null;
-  
-  try {
-    return JSON.parse(configStr);
-  } catch {
+  // For client-side, use NEXT_PUBLIC_ prefixed variables
+  if (typeof window !== "undefined") {
+    const databasePath = process.env.NEXT_PUBLIC_DATABASE_PATH;
+    const encryptionKey = process.env.ENCRYPTION_KEY;
+
+    if (!databasePath) {
+      console.error("NEXT_PUBLIC_DATABASE_PATH not configured");
+      return null;
+    }
+
+    return {
+      databasePath,
+      encryptionKey: encryptionKey || "",
+    };
+  }
+
+  // For server-side, use regular env variables
+  const databasePath = process.env.DATABASE_PATH;
+  const encryptionKey = process.env.ENCRYPTION_KEY;
+
+  if (!databasePath) {
+    console.error("DATABASE_PATH not configured");
     return null;
   }
-}
 
-export function saveConfig(config: AppConfig): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-}
-
-export function clearConfig(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(CONFIG_KEY);
+  return {
+    databasePath,
+    encryptionKey: encryptionKey || "",
+  };
 }
 
 export function isConfigured(): boolean {
-  return getConfig() !== null;
+  const config = getConfig();
+  return config !== null && !!config.databasePath;
+}
+
+// These functions are no longer needed but kept for compatibility
+export function saveConfig(config: AppConfig): void {
+  console.warn(
+    "saveConfig is deprecated - configuration is now managed via environment variables",
+  );
+}
+
+export function clearConfig(): void {
+  console.warn(
+    "clearConfig is deprecated - configuration is now managed via environment variables",
+  );
 }

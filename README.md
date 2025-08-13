@@ -14,11 +14,13 @@ A simple todo application built with Next.js and LibSQL (SQLite) featuring local
 ## Getting Started
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -37,6 +39,7 @@ When you first access the application, you'll be prompted to:
 ## Usage
 
 After setup, you can:
+
 - Add new todos by typing in the input field and clicking "Add"
 - Mark todos as complete by clicking the checkbox
 - Edit todos by clicking the edit icon
@@ -61,6 +64,7 @@ After setup, you can:
 ## Development
 
 The project structure:
+
 ```
 simple-todo/
 ├── app/              # Next.js app directory

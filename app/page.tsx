@@ -1,45 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { isConfigured, getConfig } from '@/lib/config';
-import TodoList from '@/components/TodoList';
-import { Shield, LogOut, Lock, Database } from 'lucide-react';
-import { clearConfig } from '@/lib/config';
-import { resetDb } from '@/lib/db';
+import TodoList from "@/components/TodoList";
+import { Shield, Lock, Database } from "lucide-react";
 
 export default function Home() {
-  const router = useRouter();
-  const [dbPath, setDbPath] = useState('');
-
-  useEffect(() => {
-    if (!isConfigured()) {
-      router.push('/setup');
-    } else {
-      const config = getConfig();
-      if (config) {
-        setDbPath(config.databasePath);
-      }
-    }
-  }, [router]);
-
-  const handleLogout = async () => {
-    if (confirm('Are you sure you want to logout? This will clear your configuration.')) {
-      await resetDb();
-      clearConfig();
-      await fetch('/api/logout', { method: 'POST' });
-      router.push('/setup');
-    }
-  };
-
-  if (!isConfigured()) {
-    return null;
-  }
+  // Configuration is now handled via environment variables
+  const dbPath =
+    process.env.NEXT_PUBLIC_DATABASE_PATH || "Database path not configured";
 
   return (
     <div className="min-h-screen gradient-bg">
       <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px]"></div>
-      
+
       <div className="relative z-10">
         <header className="border-b border-white/10 backdrop-blur-md bg-white/5">
           <div className="max-w-4xl mx-auto px-4 py-4">
@@ -56,13 +28,6 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 backdrop-blur-sm"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
             </div>
           </div>
         </header>

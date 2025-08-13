@@ -1,7 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Trash2, Edit2, Check, X, Circle, CheckCircle2, Clock } from 'lucide-react';
+import { useState } from "react";
+import {
+  Trash2,
+  Edit2,
+  Check,
+  X,
+  Circle,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
 
 interface Todo {
   id: number;
@@ -25,8 +33,8 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
     setIsUpdating(true);
     try {
       const response = await fetch(`/api/todos/${todo.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completed: !todo.completed }),
       });
 
@@ -34,25 +42,25 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
         onUpdate();
       }
     } catch (error) {
-      console.error('Failed to toggle todo:', error);
+      console.error("Failed to toggle todo:", error);
     } finally {
       setIsUpdating(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this todo?')) return;
+    if (!confirm("Are you sure you want to delete this todo?")) return;
 
     try {
       const response = await fetch(`/api/todos/${todo.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
         onUpdate();
       }
     } catch (error) {
-      console.error('Failed to delete todo:', error);
+      console.error("Failed to delete todo:", error);
     }
   };
 
@@ -61,8 +69,8 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
 
     try {
       const response = await fetch(`/api/todos/${todo.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: editTitle }),
       });
 
@@ -71,7 +79,7 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
         onUpdate();
       }
     } catch (error) {
-      console.error('Failed to update todo:', error);
+      console.error("Failed to update todo:", error);
     }
   };
 
@@ -88,7 +96,7 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'just now';
+    if (diffMins < 1) return "just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
@@ -96,7 +104,9 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
   };
 
   return (
-    <div className={`group relative overflow-hidden bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 hover:border-gray-300/50 transition-all duration-200 ${todo.completed ? 'opacity-75' : ''}`}>
+    <div
+      className={`group relative overflow-hidden bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 hover:border-gray-300/50 transition-all duration-200 ${todo.completed ? "opacity-75" : ""}`}
+    >
       <div className="flex items-center gap-3 p-4">
         <button
           onClick={handleToggle}
@@ -114,7 +124,7 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
             </div>
           )}
         </button>
-        
+
         {isEditing ? (
           <div className="flex-1 flex items-center gap-2">
             <input
@@ -123,8 +133,8 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
               onChange={(e) => setEditTitle(e.target.value)}
               className="flex-1 px-3 py-1.5 bg-white border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSaveEdit();
-                if (e.key === 'Escape') handleCancelEdit();
+                if (e.key === "Enter") handleSaveEdit();
+                if (e.key === "Escape") handleCancelEdit();
               }}
               autoFocus
             />
@@ -144,7 +154,9 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
         ) : (
           <>
             <div className="flex-1">
-              <span className={`block text-gray-800 ${todo.completed ? 'line-through text-gray-500' : ''}`}>
+              <span
+                className={`block text-gray-800 ${todo.completed ? "line-through text-gray-500" : ""}`}
+              >
                 {todo.title}
               </span>
               <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
@@ -169,7 +181,7 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
           </>
         )}
       </div>
-      
+
       {todo.completed && (
         <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent pointer-events-none"></div>
       )}

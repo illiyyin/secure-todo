@@ -1,23 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@libsql/client';
-import { cookies } from 'next/headers';
+import { NextResponse } from "next/server";
+import { createClient } from "@libsql/client";
 
-export async function POST(request: NextRequest) {
+// This endpoint initializes the database schema
+// Configuration is now handled via environment variables
+export async function POST() {
   try {
-    const { encryptionKey, databasePath } = await request.json();
-    
-    if (!encryptionKey || !databasePath) {
+    // Get configuration from environment variables
+    const databasePath = process.env.NEXT_PUBLIC_DATABASE_PATH;
+    const encryptionKey = process.env.ENCRYPTION_KEY;
+
+    if (!databasePath) {
       return NextResponse.json(
-        { error: 'Encryption key and database path are required' },
-        { status: 400 }
+        { error: "DATABASE_PATH not configured in environment variables" },
+        { status: 500 },
       );
     }
 
     // Test the database connection
-    const client = createClient({
+    const clientConfig: any = {
       url: `file:${databasePath}`,
-      encryptionKey,
-    });
+    };
+
+    // Only use encryption if enabled via environment variable
+    if (process.env.ENABLE_ENCRYPTION !== "false" && encryptionKey) {
+      clientConfig.encryptionKey = encryptionKey;
+    }
+
+    const client = createClient(clientConfig);
 
     // Initialize schema
     await client.execute(`
@@ -30,21 +39,15 @@ export async function POST(request: NextRequest) {
       )
     `);
 
-    // Store config in cookie for server-side access
-    const cookieStore = await cookies();
-    cookieStore.set('db-config', JSON.stringify({ encryptionKey, databasePath }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+    return NextResponse.json({
+      success: true,
+      message: "Database initialized successfully",
     });
-
-    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Setup error:', error);
+    console.error("Setup error:", error);
     return NextResponse.json(
-      { error: 'Failed to initialize database' },
-      { status: 500 }
+      { error: "Failed to initialize database" },
+      { status: 500 },
     );
   }
 }

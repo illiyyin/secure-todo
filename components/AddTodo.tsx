@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Plus, Sparkles } from 'lucide-react';
+import { useState } from "react";
+import { Plus, Sparkles } from "lucide-react";
 
 interface AddTodoProps {
   onAdd: () => void;
 }
 
 export default function AddTodo({ onAdd }: AddTodoProps) {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -18,18 +18,18 @@ export default function AddTodo({ onAdd }: AddTodoProps) {
 
     setIsAdding(true);
     try {
-      const response = await fetch('/api/todos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/todos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: title.trim() }),
       });
 
       if (response.ok) {
-        setTitle('');
+        setTitle("");
         onAdd();
       }
     } catch (error) {
-      console.error('Failed to add todo:', error);
+      console.error("Failed to add todo:", error);
     } finally {
       setIsAdding(false);
     }
@@ -37,7 +37,9 @@ export default function AddTodo({ onAdd }: AddTodoProps) {
 
   return (
     <form onSubmit={handleSubmit} className="mb-8">
-      <div className={`relative transition-all duration-300 ${isFocused ? 'transform scale-[1.02]' : ''}`}>
+      <div
+        className={`relative transition-all duration-300 ${isFocused ? "transform scale-[1.02]" : ""}`}
+      >
         <div className="flex gap-3">
           <div className="relative flex-1">
             <input

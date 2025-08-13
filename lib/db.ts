@@ -1,33 +1,50 @@
-import { createClient, type Client } from '@libsql/client';
-import { getConfig } from './config';
+import { createClient, type Client } from "@libsql/client";
 
 let dbClient: Client | null = null;
 
 export async function getDb(): Promise<Client | null> {
   if (dbClient) return dbClient;
-  
-  const config = getConfig();
-  if (!config) return null;
-  
+
+  // Get configuration from environment variables
+  const databasePath = process.env.NEXT_PUBLIC_DATABASE_PATH;
+  const encryptionKey = process.env.ENCRYPTION_KEY;
+
+  if (!databasePath) {
+    console.error(
+      "NEXT_PUBLIC_DATABASE_PATH not configured in environment variables",
+    );
+    return null;
+  }
+
   try {
-    dbClient = createClient({
-      url: `file:${config.databasePath}`,
-      encryptionKey: config.encryptionKey,
-    });
-    
+    const clientConfig: any = {
+      url: `file:${databasePath}`,
+    };
+
+    // Only use encryption if enabled via environment variable
+    // Set ENABLE_ENCRYPTION=false in .env.local to disable encryption
+    if (
+      process.env.NEXT_PUBLIC_ENABLE_ENCRYPTION !== "false" &&
+      encryptionKey
+    ) {
+      clientConfig.encryptionKey = encryptionKey;
+    }
+
+    dbClient = createClient(clientConfig);
+
     // Initialize the database schema
     await initializeSchema();
-    
+
     return dbClient;
   } catch (error) {
-    console.error('Failed to create database client:', error);
+    console.error("Failed to create database client:", error);
     return null;
   }
 }
 
 async function initializeSchema() {
   if (!dbClient) return;
-  
+
   try {
     await dbClient.execute(`
       CREATE TABLE IF NOT EXISTS todos (
@@ -39,7 +56,7 @@ async function initializeSchema() {
       )
     `);
   } catch (error) {
-    console.error('Failed to initialize schema:', error);
+    console.error("Failed to initialize schema:", error);
   }
 }
 
