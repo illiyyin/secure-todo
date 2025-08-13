@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Secure Todo App
+
+A simple todo application built with Next.js and LibSQL (SQLite) featuring local encryption at rest.
+
+## Features
+
+- **Local SQLite Database**: All data is stored locally using LibSQL
+- **Encryption at Rest**: Database is encrypted using user-provided encryption key
+- **User-Defined Database Location**: Choose where to store your database file
+- **Full CRUD Operations**: Create, read, update, and delete todos
+- **Secure Configuration**: Encryption key is never stored in plain text
+- **No External Dependencies**: Everything runs locally
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run the development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## First Time Setup
 
-## Learn More
+When you first access the application, you'll be prompted to:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Set an Encryption Key**: Choose a strong password (minimum 8 characters) that will be used to encrypt your database
+2. **Choose Database Location**: Specify where to store your encrypted database file (default: `./todos.db`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+⚠️ **Important**: Remember your encryption key! If you lose it, you won't be able to access your todos.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+After setup, you can:
+- Add new todos by typing in the input field and clicking "Add"
+- Mark todos as complete by clicking the checkbox
+- Edit todos by clicking the edit icon
+- Delete todos by clicking the trash icon
+- Logout to clear your configuration (you'll need to set up again)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Security Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Database encryption using LibSQL's built-in encryption (SQLCipher)
+- Encryption key stored in browser's localStorage (client-side only)
+- Server-side configuration stored in secure HTTP-only cookies
+- No data is sent to external servers
+
+## Technical Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Database**: LibSQL (SQLite fork with encryption support)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Language**: TypeScript
+
+## Development
+
+The project structure:
+```
+simple-todo/
+├── app/              # Next.js app directory
+│   ├── api/         # API routes
+│   ├── setup/       # Setup page
+│   └── page.tsx     # Main todo page
+├── components/       # React components
+├── lib/             # Utility functions
+└── public/          # Static assets
+```
+
+## License
+
+MIT
